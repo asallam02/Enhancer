@@ -4,16 +4,12 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication,
-    QWidget
+    QMainWindow
 )
 
-class MainWindow(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.setWindowTitle('GeneCAD')
-
-        # make sure to add widgets here for them to show
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
         # show the window
         self.show()
