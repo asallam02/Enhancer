@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import joblib
 
-MODELPATH = 'https://tfhub.dev/deepmind/enformer/1'
+MODELPATH = 'https://www.kaggle.com/models/deepmind/enformer/TensorFlow2/enformer/1'
 
 class Enformer:
 
