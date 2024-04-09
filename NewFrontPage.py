@@ -34,6 +34,34 @@ class Ui_MainWindow(object):
 
         return True
 
+    def obsStartStopConditions(self, obsStart, obsStop):
+        try:
+            start_int = int(obsStart)
+            stop_int = int(obsStop)
+            if start_int <= 0 or stop_int <= 0:
+                self.SeqErrors("Start and end positions must be greater than 0.")
+                return False
+            elif start_int >= stop_int:
+                self.SeqErrors("Start position must be less than end position.")
+                return False
+        except ValueError:
+            self.SeqErrors("Start and end positions must be positive integers.")
+            return False
+        
+        return True
+
+    def chromoConditions(self, chromosome):
+        try:
+            if chromosome.lower() not in ['x', 'y'] and not (1 <= int(chromosome) <= 22):
+                self.SeqErrors("Chromosome must be an integer between 1 and 22, or 'x' or 'y'.")
+                return False
+        except ValueError:
+            self.SeqErrors("Chromosome must be an integer between 1 and 22, or 'x' or 'y'.")
+            return False
+        
+        return True
+
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -42,24 +70,68 @@ class Ui_MainWindow(object):
 
         mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
 
-        # Horizontal layout for Start and Stop positions
-        hbox = QtWidgets.QHBoxLayout()
-        mainLayout.addLayout(hbox)
+        # Location for Chromosome Header
+        chromoHeader = QtWidgets.QLabel("Location in Chromosome:")
+        mainLayout.addWidget(chromoHeader)
 
-        # Start Position LineEdit
-        self.StartPos = QtWidgets.QLineEdit()
-        self.StartPos.setPlaceholderText("Enter start nucleotide position ")
-        hbox.addWidget(self.StartPos)
+        # Horizontal layout for Chromosome Entry
+        chromoLayout = QtWidgets.QHBoxLayout()
+        mainLayout.addLayout(chromoLayout)
 
-        # End Position LineEdit
-        self.EndPos = QtWidgets.QLineEdit()
-        self.EndPos.setPlaceholderText("Enter end nucleotide position ")
-        hbox.addWidget(self.EndPos)
+        # Chromosome LineEdit
+        self.ChromosomeEdit = QtWidgets.QLineEdit()
+        self.ChromosomeEdit.setPlaceholderText("Enter Chromosome")
+        self.ChromosomeEdit.setMaximumWidth(200)
+        chromoLayout.addWidget(self.ChromosomeEdit)
 
-        # Nucleotide Position Button (Ok)
+        # Start Observable LineEdit
+        self.obsStartPos = QtWidgets.QLineEdit()
+        self.obsStartPos.setPlaceholderText("Enter start position")
+        self.obsStartPos.setMaximumWidth(200)
+        chromoLayout.addWidget(self.obsStartPos)
+
+        # End Observable LineEdit
+        self.obsEndPos = QtWidgets.QLineEdit()
+        self.obsEndPos.setPlaceholderText("Enter stop position")
+        self.obsEndPos.setMaximumWidth(200)
+        chromoLayout.addWidget(self.obsEndPos)
+
+        # Add Observable Range Button
+        self.AddRangeButton = QtWidgets.QPushButton("Ok")
+        self.AddRangeButton.setMaximumWidth(100)
+        chromoLayout.addWidget(self.AddRangeButton)
+        self.AddRangeButton.clicked.connect(self.saveObservableRange)
+
+        # Labels for displaying input values
+        self.chromoLabel = QtWidgets.QLabel()
+        mainLayout.addWidget(self.chromoLabel)
+        self.obsStartLabel = QtWidgets.QLabel()
+        mainLayout.addWidget(self.obsStartLabel)
+        self.obsStopLabel = QtWidgets.QLabel()
+        mainLayout.addWidget(self.obsStopLabel)
+
+        # Subsequence Editing Header
+        subseqHeader = QtWidgets.QLabel("Subsequence Editing:")
+        mainLayout.addWidget(subseqHeader)
+
+        # Horizontal layout for Subsequence Entry
+        subSeqLayout = QtWidgets.QHBoxLayout()
+        mainLayout.addLayout(subSeqLayout)
+
+        # Start Position LineEdit for Subsequence
+        self.subStartPos = QtWidgets.QLineEdit()
+        self.subStartPos.setPlaceholderText("Enter start nucleotide position for subsequence")
+        subSeqLayout.addWidget(self.subStartPos)
+
+        # End Position LineEdit for Subsequence
+        self.subEndPos = QtWidgets.QLineEdit()
+        self.subEndPos.setPlaceholderText("Enter end nucleotide position for subsequence")
+        subSeqLayout.addWidget(self.subEndPos)
+
+        # Nucleotide Position Button (Ok) for Subsequence
         self.NucPosButton = QtWidgets.QPushButton("Ok")
-        hbox.addWidget(self.NucPosButton)
-        self.NucPosButton.clicked.connect(self.validateAndEnableEditing)
+        subSeqLayout.addWidget(self.NucPosButton)
+        self.NucPosButton.clicked.connect(self.subSeqDisplay)
 
         # Sequence Editor LineEdit
         self.SeqEditor = QtWidgets.QLineEdit()
@@ -88,23 +160,11 @@ class Ui_MainWindow(object):
         self.RemoveButton.setMaximumWidth(120)
         mainLayout.addWidget(self.RemoveButton)
 
-        # Locus LineEdit and Ok Button
-        locusLayout = QtWidgets.QHBoxLayout()
-        mainLayout.addLayout(locusLayout)
-
-        self.locusEdit = QtWidgets.QLineEdit()
-        self.locusEdit.setPlaceholderText("Enter Locus")
-        self.locusEdit.setMaximumWidth(200)
-        locusLayout.addWidget(self.locusEdit)
-
-        self.OkButton = QtWidgets.QPushButton("Ok")
-        self.OkButton.setMaximumWidth(100)
-        locusLayout.addWidget(self.OkButton)
-
-        # Go! Button
+        # Go Button
         self.GoButton = QtWidgets.QPushButton("Go!")
         self.GoButton.setMaximumWidth(100)
         mainLayout.addWidget(self.GoButton, alignment=QtCore.Qt.AlignmentFlag.AlignRight)
+        self.GoButton.clicked.connect(self.sequenceToProcess)
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -115,8 +175,6 @@ class Ui_MainWindow(object):
 
         self.AddSeqButton.clicked.connect(self.addSequence)
         self.RemoveButton.clicked.connect(self.removeSequence)
-        self.OkButton.clicked.connect(self.saveLocus)
-        self.GoButton.clicked.connect(self.goNext)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -125,33 +183,31 @@ class Ui_MainWindow(object):
         self.RemoveButton.setText(_translate("MainWindow", "Remove Sequence"))
         self.tableWidget.setHorizontalHeaderLabels(["", "Sequence Name", "Sequence"])
 
-    def validateAndEnableEditing(self):
-        startSeq = self.StartPos.text()
-        endSeq = self.EndPos.text()
+    def saveObservableRange(self):
+        chromosome = self.ChromosomeEdit.text()
+        obsStart = self.obsStartPos.text()
+        obsStop = self.obsEndPos.text()
 
-        errors = []
-        if not startSeq.isdigit() or not endSeq.isdigit():
-            errors.append("Start and end positions must be positive whole numbers.")
-        elif int(startSeq) <= 0 or int(endSeq) <= 0:
-            errors.append("Start and end positions must be greater than 0.")
-        elif int(startSeq) >= int(endSeq):
-            errors.append("Start position must be less than end position.")
+        if not self.chromoConditions(chromosome):
+            return
 
-        if errors:
-            error_message = "\n".join(errors)
-            self.showErrorMessageBox(error_message)
-        else:
-            subSeq = "acctagactcatcaagctgtcggca"
-            self.SeqEditor.setText(subSeq)
-            self.SeqEditor.setReadOnly(False)
+        if not self.obsStartStopConditions(obsStart, obsStop):
+            return
 
-    def showErrorMessageBox(self, message):
-        msgBox = QtWidgets.QMessageBox()
-        msgBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-        msgBox.setText(message)
-        msgBox.setWindowTitle("Error")
-        msgBox.addButton(QtWidgets.QMessageBox.StandardButton.Ok)
-        msgBox.exec()
+        self.chromoLabel.setText(f"Chromosome: {chromosome}")
+        self.obsStartLabel.setText(f"Start: {obsStart}")
+        self.obsStopLabel.setText(f"Stop: {obsStop}")
+
+    def subSeqDisplay(self):
+        startSubSeq = self.subStartPos.text()
+        endSubSeq = self.subEndPos.text()
+
+        if not self.obsStartStopConditions(startSubSeq, endSubSeq):
+            return
+
+        subSeq = "acctagactcatcaagctgtcggca"
+        self.SeqEditor.setText(subSeq)
+        self.SeqEditor.setReadOnly(False)
 
     def addSequence(self):
         sequence = self.SeqEditor.text()
@@ -159,7 +215,6 @@ class Ui_MainWindow(object):
 
         if not self.SeqConditions(sequence, seqName):
             return
-
         self.UserSeqs.append((sequence, seqName))
         self.updateTable()
 
@@ -181,28 +236,22 @@ class Ui_MainWindow(object):
             del self.UserSeqs[row]
         self.updateTable()
 
-    def saveLocus(self):
-        locus_value = self.locusEdit.text()
-        if not self.locusConditions(locus_value):
-            self.showErrorMessageBox("Please enter the locus in genome coordinate format.")
+    def sequenceToProcess(self):
+        selected_rowsProcess = [index for index in range(self.tableWidget.rowCount()) if self.tableWidget.item(index, 0).checkState() == QtCore.Qt.CheckState.Checked]
+
+        if len(selected_rowsProcess) != 1:
+            self.SeqErrors("Please select one sequence.")
             return
-        print("Locus saved:", locus_value)
 
-    def locusConditions(self, text):
-        parts = text.split(':')
-        if len(parts) != 2:
-            return False
-        if not parts[0].isdigit() or not parts[1].isdigit():
-            return False
-        return True
+        seqNametoProcess = self.tableWidget.item(selected_rowsProcess[0], 1).text()
+        sequencetoProcess = self.tableWidget.item(selected_rowsProcess[0], 2).text()
 
-    def goNext(self):
-        print("Go! button clicked")
-        print(self.UserSeqs)
+        # Save the selected sequence name and sequence to SeqToProcess
+        self.SeqToProcess = (seqNametoProcess, sequencetoProcess)
 
-    def startEndConditions(self, text):
-        if not all(char.lower() in 'atcg' for char in text.lower()):
-            self.SeqErrors("Sequence can only contain ATCG.")
+        # Proceed with further processing or display the selected sequence
+        print(f"Selected sequence name: {seqNametoProcess}, Sequence: {sequencetoProcess}")
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
@@ -211,3 +260,4 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec())
+
