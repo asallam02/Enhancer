@@ -9,9 +9,9 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QPushButton
 )
-
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
+from frontPage import MainPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -25,27 +25,30 @@ class MainWindow(QMainWindow):
         # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # self.setCentralWidget(label)
 
-        self.create_central_widget()
-        self.create_buttons()
-        
-        button = QPushButton(self)
-        button.setText("change central widget")
-        button.move(64, 32)
-        button.clicked.connect(self.button_clicked)
+        # self.create_central_widget()
 
-    def create_central_widget(self):
-        firstWidget = QLabel("Widget 1")
-        firstWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        secondWidget = QLabel("Widget 2")
-        secondWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        sequenceWidget = MainPage()
+        # firstWidget = QLabel("Home page goes here")
+        # firstWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vizPageWidget = QLabel("Visualization page goes here")
+        vizPageWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.stackedWidget = QStackedWidget()
-        self.stackedWidget.addWidget(firstWidget)
-        self.stackedWidget.addWidget(secondWidget)
+        self.stackedWidget.addWidget(sequenceWidget)
+        self.stackedWidget.addWidget(vizPageWidget)
 
         self.setCentralWidget(self.stackedWidget)
+
+        self.create_buttons()
+
+        # button = QPushButton(self)
+        # button.setText("change central widget")
+        # button.move(64, 32)
+        # button.clicked.connect(self.button_clicked)
+        sequenceWidget.GoButton.clicked.connect(self.go_btn_clicked)
         
-    def button_clicked(self):
+    def go_btn_clicked(self):
+
         self.stackedWidget.setCurrentIndex(1)
 
     def create_buttons(self):
