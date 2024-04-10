@@ -25,28 +25,31 @@ class MainWindow(QMainWindow):
         # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # self.setCentralWidget(label)
 
-        self.create_central_widget()
-        self.create_buttons()
-        
-        button = QPushButton(self)
-        button.setText("change central widget")
-        button.move(64, 32)
-        button.clicked.connect(self.button_clicked)
+        # self.create_central_widget()
 
-    def create_central_widget(self):
-        firstWidget = QLabel("Widget 1")
-        firstWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        secondWidget = QLabel("Widget 2")
-        secondWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.mainPageWidget = MainPage()
+        # firstWidget = QLabel("Home page goes here")
+        # firstWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vizPageWidget = QLabel("Visualization page goes here")
+        vizPageWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.stackedWidget = QStackedWidget()
-        self.stackedWidget.addWidget(firstWidget)
-        self.stackedWidget.addWidget(secondWidget)
+        self.stackedWidget.addWidget(self.mainPageWidget)
+        self.stackedWidget.addWidget(vizPageWidget)
 
         self.setCentralWidget(self.stackedWidget)
+
+        self.create_buttons()
+
+        # button = QPushButton(self)
+        # button.setText("change central widget")
+        # button.move(64, 32)
+        # button.clicked.connect(self.button_clicked)
+        self.mainPageWidget.GoButton.clicked.connect(self.go_btn_clicked)
         
-    def button_clicked(self):
-        self.stackedWidget.setCurrentIndex(1)
+    def go_btn_clicked(self):
+        if self.mainPageWidget.sequenceToProcess() == 1:
+            self.stackedWidget.setCurrentIndex(1)
 
     def create_buttons(self):
         # create file open button
