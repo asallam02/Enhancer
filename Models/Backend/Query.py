@@ -1,26 +1,40 @@
-from USCS_connect import *
+import sys
+sys.path.append("..")
+
+from Backend.USCS_connect import *
 from math import ceil, floor
+import numpy as np
 
 SEQUENCE_LENGTH = 393216
 
 class Query:
 
-    def __init__(self, chromosome: str, start: int, end: int):
+    def __init__(self, chromosome: str, start: int, end: int, enformer_model):
         """
         Upon initialization, calls the extract method to retrieve data from NCBI
         the data in question uses hg38. 
         """
+        self.model = enformer_model
+
+        #for the demo, we just set the tracks to 5 chosen ones instead of 5000.
+        #an improvement in the future would involve making this settable. 
+        #We have no idea how we could ge the user to chose out of 5000 options.
+
+        self.tracks = [41, 147, 188, 1085, 5050]
+
+        #THESE ARE THE MAIN VARIABLES, NEED RETURN FUNCTIONS
         self.seq_str = ""
         self.genes = []
         self.chromosome = None
         self.start = None
         self.end = None
+        self.final_str = ""
+        self.orig_result = None
+        self.modded_result = None
 
         self.sub_str = ""
         self.sub_str_start = 0
         self.sub_str_end = 0
-        
-        self.final_str = ""
 
         self.extract(chromosome, start, end)
 
@@ -71,7 +85,7 @@ class Query:
         self.sub_str = new_substr
     
     
-    def patch(self) -> str:
+    def return_mod_str(self) -> str:
         #the sub_sequence is only put onto the actual sequence at the last moment, to prevent errors
         self.final_str = self.seq_str[0:self.sub_str_start+1] + self.sub_str + self.seq_str[self.sub_str_end+1:]
         #gotta do some padding to make sequence the appropriate length
@@ -96,3 +110,44 @@ class Query:
             self.final_str = self.final_str[removeleft: -removeright]
 
         return self.final_str
+    
+    
+    def return_orig_str(self)-> str:
+        current_length = len(self.seq_str)
+        length_diff = SEQUENCE_LENGTH - current_length
+
+        #for positive length difference, ie the given sequence is shorter than allowed.
+        if length_diff > 0:
+            addleft = int(floor(length_diff/2))
+            addright = int(ceil(length_diff/2))
+
+            pad_upstream = 'N' * addleft
+            pad_downstream = 'N' * addright
+
+            self.seq_str = pad_upstream + self.seq_str + pad_downstream
+
+        #takes care of negative difference, ie the given sequence is now larger than allowed
+        if length_diff < 0:
+            removeleft = int(floor(-length_diff/2))
+            removeright = int(ceil(-length_diff/2))
+
+            self.seq_str = self.seq_str[removeleft: -removeright]
+
+        return self.seq_str
+    
+    def calculate_enformer(self):
+        #slicing to get desireed tracks. 
+        self.orig_result = self.model.enform(self.seq_str)[:, self.tracks]
+        self.modded = self.model.enform(self.final_str)[:, self.tracks]
+
+    def return_genes(self):
+        return self.genes
+    
+    def return_orig_result(self, track_no):
+        return self.orig_result[:, track_no]
+    
+    def return_modded(self, track_no):
+        return self.modded[:, track_no]
+    
+    
+        

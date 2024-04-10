@@ -38,7 +38,12 @@ def clust(diff_locs, neigbour_dist):
             y is the ending index of the cluster (inclusive)
     """
     clusters = []
-    current_cluster = [diff_locs[0], diff_locs[0]]
+
+    #take care of empty case.
+    if len(diff_locs) == 0:
+        return []
+    else:
+        current_cluster = [diff_locs[0], diff_locs[0]]
 
     for j in diff_locs:
         if (j - current_cluster[1]) > neigbour_dist:

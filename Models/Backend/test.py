@@ -29,23 +29,23 @@ print(genes)
 # print(fasta[-100:])
 
 #testing addition of 20 characters
-testQuery = Query(chromosome, start, end)
-testQuery.define_sub_seq(36,55)
-testQuery.update_sub_seq("ATGGCTAACCGGATAGCTAC")
-seq = testQuery.patch()
-print(fasta[:60])
-print(seq[:60])
+# testQuery = Query(chromosome, start, end)
+# testQuery.define_sub_seq(36,55)
+# testQuery.update_sub_seq("ATGGCTAACCGGATAGCTAC")
+# seq = testQuery.patch()
+# print(fasta[:60])
+# print(seq[:60])
 
 
-Enformertest = Enformer()
-results = Enformertest.enform(seq)
+# Enformertest = Enformer()
+# results = Enformertest.enform(seq)
 
-testTracks = Tracks()
-testkey = testTracks.return_all_options()[10]
-print(testkey)
+# testTracks = Tracks()
+# testkey = testTracks.return_all_options()[10]
+# print(testkey)
 
-testResult = Result(testTracks, results)
-print(testResult.return_tracks([testkey]))
+# testResult = Result(testTracks, results, results)
+# print(testResult.return_tracks(testkey))
 
 
 

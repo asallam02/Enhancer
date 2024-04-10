@@ -9,24 +9,23 @@ class Result:
     Any modificatons to the results (log, etc) should be made here. 
     """
 
-    def __init__(self, tracks: Tracks, results) -> None:
+    def __init__(self, tracks: Tracks, orig_results, mod_results) -> None:
         self.tracks = tracks
-        self.results = results
+        self.orig = orig_results
+        self.mod = mod_results
 
-    def return_tracks(self, track_list: List[str], scale = 'linear'):
-        values = dict()
+    #Return user specified tracks for both original and modded
+    def return_tracks(self, track: str, scale = 'linear'):
+        orig_results = self.orig_results[:,self.tracks.find_index(track)]
+        mod_results = self.mod_results[:,self.tracks.find_index(track)]
 
-        for track in track_list:
-            track_results = self.results[:,self.tracks.find_index(track)]
+        #add scaling options here
+        match scale:
+            case 'linear':
+                pass
+            case 'log10':
+                orig_results = log10(1+ orig_results)
+                mod_results = log10(1+ mod_results)
 
-            #add scaling options here
-            match scale:
-                case 'linear':
-                    pass
-                case 'log10':
-                    track_results = log10(1+ track_results)
-
-            values[track] = track_results
-
-        return values
+        return orig_results, mod_results
 
