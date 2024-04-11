@@ -112,7 +112,7 @@ class VariablePage(QWidget):
         #     raise ValueError("variable page: need to initalize sequences first")
         
         # create organizer object
-        self.organizer = Organizer(self.originalSeq, self.moddedSeq)
+        self.organizer = Organizer(self.originalSeq, self.moddedSeq, self.startpos)
         print("created organizer object")
 
         # get values from user input
@@ -129,7 +129,7 @@ class VariablePage(QWidget):
 
 
 def genRandomColor():
-    hexadecimal = ["#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])]
+    hexadecimal = "#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])
     return hexadecimal      
 
 

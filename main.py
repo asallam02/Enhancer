@@ -55,6 +55,7 @@ class MainWindow(QMainWindow):
         # go to variable page
         self.variablePageWidget.originalSeq = self.queryToProcess.orig_result
         self.variablePageWidget.moddedSeq = self.queryToProcess.modded_result
+        self.variablePageWidget.startpos = self.queryToProcess.start
         self.stackedWidget.setCurrentIndex(1)
 
     def visualize(self):

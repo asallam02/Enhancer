@@ -48,11 +48,11 @@ class VizPage(QWidget):
         self.track4 = GraphTab(3)
         self.track5 = GraphTab(4)
 
-        self.tabs.addTab(self.track1, "Track 1")
-        self.tabs.addTab(self.track2, "Track 2")
-        self.tabs.addTab(self.track3, "Track 3")
-        self.tabs.addTab(self.track4, "Track 4")
-        self.tabs.addTab(self.track5, "Track 5")
+        self.tabs.addTab(self.track1, "DNASE:CD14-positive monocyte female")
+        self.tabs.addTab(self.track2, "DNASE:skeletal muscle cell")
+        self.tabs.addTab(self.track3, "DNASE:T-cell")
+        self.tabs.addTab(self.track4, "CHIP:CTCF:keratinocyte female")
+        self.tabs.addTab(self.track5, "CAGE:Wilms' tumor cell line:G-401")
 
         layout.addWidget(self.tabs)
         self.setLayout(layout)

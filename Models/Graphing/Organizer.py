@@ -12,10 +12,11 @@ Note: you will need to update parameters to reflect the metrics.py file
 class Organizer:
 
     #takes a result object, see backend
-    def __init__(self, original, modded):
+    def __init__(self, original, modded, start):
         #get these from the query object
         self.original = original 
         self.modded = modded
+        self.startpos = start
 
         self.params = dict()
         self.colors = dict()
@@ -24,7 +25,7 @@ class Organizer:
         """
         adding a new box in with distinct box_id
         """
-        params = [start, end, dm, nd, hs]
+        params = [int((start - self.startpos)/128), int((end-self.startpos)/128), dm, nd, hs]
         if (box_id not in self.params) or (self.params[box_id] != params):
             self.params[box_id] = params
 
