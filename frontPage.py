@@ -10,7 +10,7 @@ class MainPage(QtWidgets.QWidget):
 
 
     def __init__(self, model, parent=None):
-        self.model = model
+        self.MODEL = model
         super().__init__(parent)
         self.UserSeqs = []
         self.QueryObjects = []

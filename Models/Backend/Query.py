@@ -134,8 +134,12 @@ class Query:
         return self.seq_str
     
     def calculate_enformer(self):
-        #slicing to get desireed tracks. 
+        #slicing to get desireed tracks.
+        self.return_mod_str()
+        self.return_orig_str()
+        print("started original sequence enformer --------------------")
         self.orig_result = self.model.enform(self.seq_str)[:, self.tracks]
+        print("started modded sequence enformer ----------------------")
         self.modded = self.model.enform(self.final_str)[:, self.tracks]
 
     def return_genes(self):

@@ -1,4 +1,5 @@
 import sys
+import random
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea, QMessageBox
 from Models.Graphing.Organizer import Organizer
 
@@ -106,26 +107,30 @@ class VariablePage(QWidget):
                 break
 
     def go_to_next_page(self):
-
-        #MAKE ORGANIZER OBJECT HERE
         # make sure original and modded are a initialized
         if (self.originalSeq == '' or self.moddedSeq == ''):
             raise ValueError("variable page: need to initalize sequences first")
         
         # create organizer object
-        organizer = Organizer(self.originalSeq, self.moddedSeq)
+        self.organizer = Organizer(self.originalSeq, self.moddedSeq)
         print("created organizer object")
 
+        # get values from user input
+        j = 0
         for layout in self.box_layouts:
             values = []
             for i in range(layout.count() - 1):  # Exclude the delete button
                 widget = layout.itemAt(i).widget()
                 if isinstance(widget, QLabel):
                     values.append(float(widget.text()))
-            # is this correct?
-            organizer.add_box(values[0], values[1], values[2], values[3], values[4], values[5], values[6])
 
-            
+            self.organizer.add_box(j, values[0], values[1], values[2], values[3], values[4], genRandomColor())
+            j += 1
+
+
+def genRandomColor():
+    hexadecimal = ["#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])]
+    return hexadecimal      
 
 
 def main():
