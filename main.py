@@ -13,6 +13,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 
+from frontPage import MainPage
+
 class MainWindow(QMainWindow):
     def __init__(self):
         # create the window and set title
