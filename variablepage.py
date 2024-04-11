@@ -123,8 +123,8 @@ class VariablePage(QWidget):
                 widget = layout.itemAt(i).widget()
                 if isinstance(widget, QLabel):
                     values.append(float(widget.text()))
-
-            self.organizer.add_box(j, values[0], values[1], values[2], values[3], values[4], genRandomColor())
+            print(values)
+            self.organizer.add_box(j, int(values[0]), int(values[1]), values[2], int(values[3]), int(values[4]), genRandomColor())
             j += 1
 
 

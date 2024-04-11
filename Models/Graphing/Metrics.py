@@ -18,6 +18,8 @@ def comp(T1, T2,start, end, diff_mag):
     Outputs:
         diff_locs - an np array containing all indices of differences above the alpha threshold according to the given box_starts and alphas 
     """
+    print(T1)
+    print(T2)
     Difference = np.absolute(np.subtract(T1, T2))
     diff_locs = np.where(Difference[start:end] >= diff_mag)[0] + start
     return diff_locs

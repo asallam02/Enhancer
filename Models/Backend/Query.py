@@ -140,7 +140,7 @@ class Query:
         print("started original sequence enformer --------------------")
         self.orig_result = self.model.enform(self.seq_str)[:, self.tracks]
         print("started modded sequence enformer ----------------------")
-        self.modded = self.model.enform(self.final_str)[:, self.tracks]
+        self.modded_result = self.model.enform(self.final_str)[:, self.tracks]
 
     def return_genes(self):
         return self.genes
@@ -149,7 +149,7 @@ class Query:
         return self.orig_result[:, track_no]
     
     def return_modded(self, track_no):
-        return self.modded[:, track_no]
+        return self.modded_result[:, track_no]
     
     def return_start(self):
         return self.start
