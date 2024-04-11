@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..")
 
-import Graphing.Metrics as mets
+from .Metrics import *
 """
 Class that stores and takes care of organizing the boxes with different metrics. 
 Updates to the number of boxes, or box parameters are to be made here
@@ -74,7 +74,7 @@ class Organizer:
             params = self.params[i]
             orig = self.original
             mod = self.modded
-            X = mets.comp(orig, mod, params[0], params[1], params[2])
-            X = mets.clust(X, params[3])
-            results = mets.elim(X, params[4])
+            X = comp(orig, mod, params[0], params[1], params[2])
+            X = clust(X, params[3])
+            results = elim(X, params[4])
             self.indices[i] = results

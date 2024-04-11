@@ -1,7 +1,11 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea, QMessageBox
+from Models.Graphing.Organizer import Organizer
 
-class BoxWidget(QWidget):
+class VariablePage(QWidget):
+    originalSeq = ''
+    moddedSeq = ''
+
     def __init__(self):
         super().__init__()
 
@@ -43,7 +47,7 @@ class BoxWidget(QWidget):
 
         # Next Button
         self.next_button = QPushButton('Next')
-        self.next_button.clicked.connect(self.go_to_next_page)
+        # self.next_button.clicked.connect(self.go_to_next_page)
         self.main_layout.addWidget(self.next_button)
 
         self.setLayout(self.main_layout)
@@ -104,6 +108,13 @@ class BoxWidget(QWidget):
     def go_to_next_page(self):
 
         #MAKE ORGANIZER OBJECT HERE
+        # make sure original and modded are a initialized
+        if (self.originalSeq == '' or self.moddedSeq == ''):
+            raise ValueError("variable page: need to initalize sequences first")
+        
+        # create organizer object
+        organizer = Organizer(self.originalSeq, self.moddedSeq)
+        print("created organizer object")
 
         for layout in self.box_layouts:
             values = []
@@ -111,6 +122,8 @@ class BoxWidget(QWidget):
                 widget = layout.itemAt(i).widget()
                 if isinstance(widget, QLabel):
                     values.append(float(widget.text()))
+            # is this correct?
+            organizer.add_box(values[0], values[1], values[2], values[3], values[4], values[5], values[6])
 
             
 
@@ -120,7 +133,7 @@ def main():
     window = QWidget()
     layout = QVBoxLayout()
 
-    box_widget = BoxWidget()
+    box_widget = VariablePage()
     layout.addWidget(box_widget)
 
     window.setLayout(layout)

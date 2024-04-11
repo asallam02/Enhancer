@@ -2,11 +2,15 @@ import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from Models.Backend.Query import Query
+from Models.Backend.Enformer import Enformer
 
 class MainPage(QtWidgets.QWidget):
     MODEL = None ##PLEASE ADD ENFORMER MODEL PASSED FROM MAIN HERE
+    selectedIdx = -1
 
-    def __init__(self, parent=None):
+
+    def __init__(self, model, parent=None):
+        self.model = model
         super().__init__(parent)
         self.UserSeqs = []
         self.QueryObjects = []
@@ -182,8 +186,8 @@ class MainPage(QtWidgets.QWidget):
 
     def saveObservableRange(self):
         chromosome = self.ChromosomeEdit.text()
-        obsStart = self.obsStartPos.text()
-        obsStop = self.obsEndPos.text()
+        obsStart = int(self.obsStartPos.text())
+        obsStop = int(self.obsEndPos.text())
 
         if self.chromoConditions(chromosome) and self.obsStartStopConditions(obsStart, obsStop):
             self.chromoLabel.setText(f"Chromosome: {chromosome}")
@@ -195,7 +199,7 @@ class MainPage(QtWidgets.QWidget):
             self.NucPosButton.setEnabled(True)
 
             #MAKE QUEREY OBJECT HERE
-            self.tempQuery = Query(chromosome, obsStart, obsStop, MODEL)
+            self.tempQuery = Query(chromosome, obsStart, obsStop, self.MODEL)
         else:
             self.observableRangeSet = False
 
@@ -205,8 +209,8 @@ class MainPage(QtWidgets.QWidget):
             self.SeqErrors("Please set the observable range first.")
             return
         
-        startSubSeq = self.subStartPos.text()
-        endSubSeq = self.subEndPos.text()
+        startSubSeq = int(self.subStartPos.text())
+        endSubSeq = int(self.subEndPos.text())
 
         if not self.obsStartStopConditions(startSubSeq, endSubSeq):
             return
@@ -251,7 +255,6 @@ class MainPage(QtWidgets.QWidget):
 
     def sequenceToProcess(self):
         selected_rowsProcess = [index for index in range(self.tableWidget.rowCount()) if self.tableWidget.item(index, 0).checkState() == QtCore.Qt.CheckState.Checked]
-
         if len(selected_rowsProcess) != 1:
             self.SeqErrors("Please select one sequence.")
             return
@@ -269,6 +272,7 @@ class MainPage(QtWidgets.QWidget):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    widget = MainPage()
+    model = Enformer()
+    widget = MainPage(model)
     widget.show()
     sys.exit(app.exec())

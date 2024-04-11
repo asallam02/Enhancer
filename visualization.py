@@ -23,10 +23,10 @@ class GraphTab(QWidget):
         fig = go.Figure(data=data, layout=layout)
 
         # Convert Plotly figure to HTML
-        plotly_html = fig.to_html(full_html=False)
+        plotly_html = fig.to_html(include_plotlyjs='cdn')
         self.webview.setHtml(plotly_html)
 
-class MainWindow(QWidget):
+class VizPage(QWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -55,7 +55,7 @@ class MainWindow(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = VizPage()
     window.setWindowTitle('Graphs')
     window.setGeometry(100, 100, 800, 600)
     window.show()

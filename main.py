@@ -1,5 +1,12 @@
 # This is the main python file to run the app
-# rn just opens an empty window
+
+'''
+main flow
+- on startup: make enformer object
+- firstpage: make the query object
+- variablepage: make the organizer object
+- visualization: plot the graphs
+'''
 
 import sys
 from PyQt6.QtWidgets import (
@@ -12,6 +19,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 from frontPage import MainPage
+from Models.Backend.Enformer import Enformer
+from variablePage import VariablePage
+from visualization import VizPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -19,37 +29,34 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.setWindowTitle("Enhancer")
 
-        # set the central widget 
-        # NOTE: change this to a stacked widget later to have both pages
-        # label = QLabel("Hello World")
-        # label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.setCentralWidget(label)
-
-        # self.create_central_widget()
-
-        sequenceWidget = MainPage()
-        # firstWidget = QLabel("Home page goes here")
-        # firstWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        vizPageWidget = QLabel("Visualization page goes here")
-        vizPageWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        model = Enformer()
+        self.sequenceWidget = MainPage(model)
+        self.variablePageWidget = VariablePage()
+        self.vizPageWidget = VizPage()
 
         self.stackedWidget = QStackedWidget()
-        self.stackedWidget.addWidget(sequenceWidget)
-        self.stackedWidget.addWidget(vizPageWidget)
+        self.stackedWidget.addWidget(self.sequenceWidget)
+        self.stackedWidget.addWidget(self.variablePageWidget)
+        self.stackedWidget.addWidget(self.vizPageWidget)
 
         self.setCentralWidget(self.stackedWidget)
 
         self.create_buttons()
 
-        # button = QPushButton(self)
-        # button.setText("change central widget")
-        # button.move(64, 32)
-        # button.clicked.connect(self.button_clicked)
-        sequenceWidget.GoButton.clicked.connect(self.go_btn_clicked)
+        self.sequenceWidget.GoButton.clicked.connect(self.go_btn_clicked)
+        self.variablePageWidget.next_button.clicked.connect(self.visualize)
         
     def go_btn_clicked(self):
-
+        # save the data from this page
+        queryToProcess = self.sequenceWidget.QueryToProcess
+        self.variablePageWidget.originalSeq = queryToProcess.orig_result
+        self.variablePageWidget.moddedSeq = queryToProcess.modded_result
+        self.variablePageWidget.go_to_next_page()
         self.stackedWidget.setCurrentIndex(1)
+
+    def visualize(self):
+        # run the visualizations
+        self.stackedWidget.setCurrentIndex(2)
 
     def create_buttons(self):
         # create file open button

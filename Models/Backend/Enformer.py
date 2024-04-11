@@ -5,7 +5,7 @@ import numpy as np
 import kipoiseq
 
 SEQUENCE_LENGTH = 393216
-model_path = 'https://tfhub.dev/deepmind/enformer/1'
+model_path = 'https://www.kaggle.com/models/deepmind/enformer/TensorFlow2/enformer/1'
 
 class Enformer:
 
