@@ -1,7 +1,7 @@
-from Backend.Query import Query
-from Backend.Enformer import Enformer
-from Graphing.Organizer import Organizer
-from Graphing.Plotter import Plotter
+from Models.Backend.Query import Query
+from Models.Backend.Enformer import Enformer
+from Models.Graphing.Organizer import Organizer
+from Models.Graphing.Plotter import Plotter
 
 chromosome = 'chr1'
 start = 1

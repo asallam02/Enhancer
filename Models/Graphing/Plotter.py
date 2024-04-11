@@ -4,9 +4,10 @@ def Plotter(Query, Organizer, track_no):
    #get actual results
    original = Query.return_orig_result(track_no)
    modded = Query.return_modded(track_no)
-   genes = Query.return_genes()
+   #genes = Query.return_genes()
+   start = Query.return_start()
 
-   indices = list(range(len(original)))
+   indices = [(start + (i * 128)) for i in range(len(original))]
 
    #get boxes
    dims = Organizer.return_dims()
@@ -22,10 +23,10 @@ def Plotter(Query, Organizer, track_no):
 
    for i in dims.keys():
         #drawing box boundaries
-        fig.add_vrect(x0=dims[i][0], x1=dims[i][1])
+        fig.add_vrect(x0=start + (dims[i][0]*128), x1=start + (dims[i][1]*128))
         #drawing the regions of signficant difference in the box
         for diff_coords in boxes[i]:
-            fig.add_vrect(x0=diff_coords[0], x1=diff_coords[1],
+            fig.add_vrect(x0=start + (diff_coords[0]*128), x1=start + (diff_coords[1]*128),
                         fillcolor=colors[i], opacity=0.2)
             
    fig.update_layout(

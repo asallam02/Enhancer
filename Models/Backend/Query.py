@@ -147,5 +147,8 @@ class Query:
     def return_modded(self, track_no):
         return self.modded[:, track_no]
     
+    def return_start(self):
+        return self.start
+    
     
         
