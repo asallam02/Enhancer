@@ -48,14 +48,26 @@ class MainWindow(QMainWindow):
         
     def go_btn_clicked(self):
         # save the data from this page
-        queryToProcess = self.sequenceWidget.QueryToProcess
-        self.variablePageWidget.originalSeq = queryToProcess.orig_result
-        self.variablePageWidget.moddedSeq = queryToProcess.modded_result
-        self.variablePageWidget.go_to_next_page()
+        self.queryToProcess = self.sequenceWidget.QueryToProcess
+        # get results from enformer
+        self.queryToProcess.calculate_enformer()
+
+        # go to variable page
+        self.variablePageWidget.originalSeq = self.queryToProcess.orig_result
+        self.variablePageWidget.moddedSeq = self.queryToProcess.modded_result
         self.stackedWidget.setCurrentIndex(1)
 
     def visualize(self):
         # run the visualizations
+        # create organizer object 
+        self.variablePageWidget.go_to_next_page()
+
+        # set objects in visualization page
+        self.vizPageWidget.organizer = self.variablePageWidget.organizer
+        self.vizPageWidget.query = self.queryToProcess
+
+        # visualize
+        self.vizPageWidget.plot_graphs()
         self.stackedWidget.setCurrentIndex(2)
 
     def create_buttons(self):

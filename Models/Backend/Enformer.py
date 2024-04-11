@@ -17,8 +17,11 @@ class Enformer:
         return(self.predict_on_batch(self.one_hot_encode(sequence)))['human'][0]
 
     def one_hot_encode(self, sequence):
+        print("did one hot encoding")
         return kipoiseq.transforms.functional.one_hot_dna(sequence).astype(np.float32)
     
     def predict_on_batch(self, one_hot_seq):
+        print("started predictions")
         predictions = self._model.predict_on_batch(one_hot_seq[np.newaxis])
+        print("finished predictions")
         return {k: v.numpy() for k, v in predictions.items()}

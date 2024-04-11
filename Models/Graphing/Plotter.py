@@ -43,4 +43,4 @@ def Plotter(Query, Organizer, track_no):
         )
     )
    
-   fig.show()
+   return fig
