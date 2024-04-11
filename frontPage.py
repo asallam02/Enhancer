@@ -1,10 +1,16 @@
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+from Models.Backend.Query import Query
+
 class MainPage(QtWidgets.QWidget):
+    MODEL = None ##PLEASE ADD ENFORMER MODEL PASSED FROM MAIN HERE
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.UserSeqs = []
+        self.QueryObjects = []
+        self.tempQuery = None
 
         mainLayout = QtWidgets.QVBoxLayout(self)
 
@@ -188,6 +194,10 @@ class MainPage(QtWidgets.QWidget):
         self.obsStartLabel.setText(f"Start: {obsStart}")
         self.obsStopLabel.setText(f"Stop: {obsStop}")
 
+        #MAKE QUEREY OBJECT HERE
+        self.tempQuery = Query(chromosome, obsStart, obsStop, MODEL)
+
+
     def subSeqDisplay(self):
         startSubSeq = self.subStartPos.text()
         endSubSeq = self.subEndPos.text()
@@ -195,7 +205,7 @@ class MainPage(QtWidgets.QWidget):
         if not self.obsStartStopConditions(startSubSeq, endSubSeq):
             return
 
-        subSeq = "acctagactcatcaagctgtcggca"
+        subSeq = self.tempQuery.define_sub_seq(startSubSeq, endSubSeq)
         self.SeqEditor.setText(subSeq)
         self.SeqEditor.setReadOnly(False)
 
@@ -207,6 +217,12 @@ class MainPage(QtWidgets.QWidget):
             return
         self.UserSeqs.append((sequence, seqName))
         self.updateTable()
+
+        self.tempQuery.update_sub_seq(sequence)
+        self.QueryObjects.append(self.tempQuery)
+
+        #reset variable so it can't be changed
+        self.tempQuery = None
 
     def updateTable(self):
         self.tableWidget.setRowCount(len(self.UserSeqs))
@@ -224,6 +240,7 @@ class MainPage(QtWidgets.QWidget):
         selected_rows = [index for index in range(self.tableWidget.rowCount()) if self.tableWidget.item(index, 0).checkState() == QtCore.Qt.CheckState.Checked]
         for row in sorted(selected_rows, reverse=True):
             del self.UserSeqs[row]
+            del self.QueryObjects[row]
         self.updateTable()
 
     def sequenceToProcess(self):
@@ -238,6 +255,7 @@ class MainPage(QtWidgets.QWidget):
 
         # Save the selected sequence name and sequence to SeqToProcess
         self.SeqToProcess = (seqNametoProcess, sequencetoProcess)
+        self.QueryToProcess = self.QueryObjects[selected_rowsProcess[0]]
 
         # Proceed with further processing or display the selected sequence
         print(f"Selected sequence name: {seqNametoProcess}, Sequence: {sequencetoProcess}")

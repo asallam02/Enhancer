@@ -1,7 +1,4 @@
-import sys
-sys.path.append("..")
-
-from Backend.USCS_connect import *
+from Models.Backend.USCS_connect import *
 from math import ceil, floor
 import numpy as np
 

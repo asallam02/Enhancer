@@ -197,6 +197,7 @@ class Ui_MainWindow(object):
         self.chromoLabel.setText(f"Chromosome: {chromosome}")
         self.obsStartLabel.setText(f"Start: {obsStart}")
         self.obsStopLabel.setText(f"Stop: {obsStop}")
+        #@@ MAKE QUERY HERE
 
     def subSeqDisplay(self):
         startSubSeq = self.subStartPos.text()
@@ -205,6 +206,7 @@ class Ui_MainWindow(object):
         if not self.obsStartStopConditions(startSubSeq, endSubSeq):
             return
 
+        #@@ CALL CURRENT QUERY OBJECT TO GET THIS
         subSeq = "acctagactcatcaagctgtcggca"
         self.SeqEditor.setText(subSeq)
         self.SeqEditor.setReadOnly(False)
