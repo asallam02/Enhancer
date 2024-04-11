@@ -74,6 +74,7 @@ class MainPage(QtWidgets.QWidget):
 
         # Nucleotide Position Button (Ok) for Subsequence
         self.NucPosButton = QtWidgets.QPushButton("Ok")
+        self.NucPosButton.setEnabled(False)  # Initially disabled
         subSeqLayout.addWidget(self.NucPosButton)
         self.NucPosButton.clicked.connect(self.subSeqDisplay)
 
@@ -184,21 +185,26 @@ class MainPage(QtWidgets.QWidget):
         obsStart = self.obsStartPos.text()
         obsStop = self.obsEndPos.text()
 
-        if not self.chromoConditions(chromosome):
-            return
+        if self.chromoConditions(chromosome) and self.obsStartStopConditions(obsStart, obsStop):
+            self.chromoLabel.setText(f"Chromosome: {chromosome}")
+            self.obsStartLabel.setText(f"Start Position: {obsStart}")
+            self.obsStopLabel.setText(f"Stop Position: {obsStop}")
+            self.observableRangeSet = True
+            self.subStartPos.setEnabled(True)
+            self.subEndPos.setEnabled(True)
+            self.NucPosButton.setEnabled(True)
 
-        if not self.obsStartStopConditions(obsStart, obsStop):
-            return
-
-        self.chromoLabel.setText(f"Chromosome: {chromosome}")
-        self.obsStartLabel.setText(f"Start: {obsStart}")
-        self.obsStopLabel.setText(f"Stop: {obsStop}")
-
-        #MAKE QUEREY OBJECT HERE
-        self.tempQuery = Query(chromosome, obsStart, obsStop, MODEL)
+            #MAKE QUEREY OBJECT HERE
+            self.tempQuery = Query(chromosome, obsStart, obsStop, MODEL)
+        else:
+            self.observableRangeSet = False
 
 
     def subSeqDisplay(self):
+        if not self.observableRangeSet:
+            self.SeqErrors("Please set the observable range first.")
+            return
+        
         startSubSeq = self.subStartPos.text()
         endSubSeq = self.subEndPos.text()
 

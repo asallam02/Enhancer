@@ -5,6 +5,7 @@ import numpy as np
 SEQUENCE_LENGTH = 393216
 
 class Query:
+    
 
     def __init__(self, chromosome: str, start: int, end: int, enformer_model):
         """
