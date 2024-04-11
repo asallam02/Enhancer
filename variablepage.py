@@ -1,7 +1,6 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea, QMessageBox
 
-
 class BoxWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -15,7 +14,7 @@ class BoxWidget(QWidget):
 
         # Insert Section
         self.input_layout = QHBoxLayout()
-        self.input_labels = ['Value 1:', 'Value 2:', 'Value 3:', 'Value 4:', 'Value 5:']
+        self.input_labels = ['Start:', 'Stop:', 'magnitude:', 'neighbours:', 'cluster size:']
         self.input_fields = [QLineEdit() for _ in range(len(self.input_labels))]
 
         for label, field in zip(self.input_labels, self.input_fields):
@@ -103,8 +102,17 @@ class BoxWidget(QWidget):
                 break
 
     def go_to_next_page(self):
-        # Placeholder function for navigating to the next page
-        print("Go to next page")
+
+        #MAKE ORGANIZER OBJECT HERE
+
+        for layout in self.box_layouts:
+            values = []
+            for i in range(layout.count() - 1):  # Exclude the delete button
+                widget = layout.itemAt(i).widget()
+                if isinstance(widget, QLabel):
+                    values.append(float(widget.text()))
+
+            
 
 
 def main():
