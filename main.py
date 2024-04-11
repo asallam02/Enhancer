@@ -14,6 +14,7 @@ from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt
 
 from frontPage import MainPage
+from Models.Backend.Enformer import Enformer
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -28,8 +29,9 @@ class MainWindow(QMainWindow):
         # self.setCentralWidget(label)
 
         # self.create_central_widget()
+        model = Enformer()
 
-        self.mainPageWidget = MainPage()
+        sequenceWidget = MainPage(model)
         # firstWidget = QLabel("Home page goes here")
         # firstWidget.setAlignment(Qt.AlignmentFlag.AlignCenter)
         vizPageWidget = QLabel("Visualization page goes here")

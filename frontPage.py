@@ -1,8 +1,13 @@
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+from Models.Backend.Query import Query
+
 class MainPage(QtWidgets.QWidget):
-    def __init__(self, parent=None):
+    MODEL = None ##PLEASE ADD ENFORMER MODEL PASSED FROM MAIN HERE
+
+    def __init__(self, model, parent=None):
+        self.MODEL = model
         super().__init__(parent)
         self.UserSeqs = []
 
@@ -175,8 +180,8 @@ class MainPage(QtWidgets.QWidget):
 
     def saveObservableRange(self):
         chromosome = self.ChromosomeEdit.text()
-        obsStart = self.obsStartPos.text()
-        obsStop = self.obsEndPos.text()
+        obsStart = int(self.obsStartPos.text())
+        obsStop = int(self.obsEndPos.text())
 
         if not self.chromoConditions(chromosome):
             return
@@ -188,9 +193,13 @@ class MainPage(QtWidgets.QWidget):
         self.obsStartLabel.setText(f"Start: {obsStart}")
         self.obsStopLabel.setText(f"Stop: {obsStop}")
 
+        #MAKE QUEREY OBJECT HERE
+        self.tempQuery = Query(chromosome, obsStart, obsStop, self.MODEL)
+
+
     def subSeqDisplay(self):
-        startSubSeq = self.subStartPos.text()
-        endSubSeq = self.subEndPos.text()
+        startSubSeq = int(self.subStartPos.text())
+        endSubSeq = int(self.subEndPos.text())
 
         if not self.obsStartStopConditions(startSubSeq, endSubSeq):
             return
