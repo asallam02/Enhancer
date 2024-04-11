@@ -72,9 +72,7 @@ class Organizer:
         self.indices = dict()
         for i in boxes:
             params = self.params[i]
-            orig = self.original
-            mod = self.modded
-            X = comp(orig, mod, params[0], params[1], params[2])
+            X = comp(self.original, self.modded, params[0], params[1], params[2])
             X = clust(X, params[3])
             results = elim(X, params[4])
             self.indices[i] = results

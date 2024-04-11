@@ -4,8 +4,8 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLa
 from Models.Graphing.Organizer import Organizer
 
 class VariablePage(QWidget):
-    originalSeq = ''
-    moddedSeq = ''
+    originalSeq = None
+    moddedSeq = None
 
     def __init__(self):
         super().__init__()
@@ -108,8 +108,8 @@ class VariablePage(QWidget):
 
     def go_to_next_page(self):
         # make sure original and modded are a initialized
-        if (self.originalSeq == '' or self.moddedSeq == ''):
-            raise ValueError("variable page: need to initalize sequences first")
+        # if (self.originalSeq == None or self.moddedSeq == None):
+        #     raise ValueError("variable page: need to initalize sequences first")
         
         # create organizer object
         self.organizer = Organizer(self.originalSeq, self.moddedSeq)

@@ -42,11 +42,11 @@ class VizPage(QWidget):
         self.tabs = QTabWidget()
 
         # Create tabs and add them to the tab widget
-        self.track1 = GraphTab(1)
-        self.track2 = GraphTab(2)
-        self.track3 = GraphTab(3)
-        self.track4 = GraphTab(4)
-        self.track5 = GraphTab(5)
+        self.track1 = GraphTab(0)
+        self.track2 = GraphTab(1)
+        self.track3 = GraphTab(2)
+        self.track4 = GraphTab(3)
+        self.track5 = GraphTab(4)
 
         self.tabs.addTab(self.track1, "Track 1")
         self.tabs.addTab(self.track2, "Track 2")
