@@ -1,5 +1,5 @@
 import sys
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 
 class Ui_MainWindow(object):
     def SeqErrors(self, error_message):
@@ -121,15 +121,18 @@ class Ui_MainWindow(object):
         # Start Position LineEdit for Subsequence
         self.subStartPos = QtWidgets.QLineEdit()
         self.subStartPos.setPlaceholderText("Enter start nucleotide position for subsequence")
+        self.subStartPos.setEnabled(False)  # Initially disabled
         subSeqLayout.addWidget(self.subStartPos)
 
         # End Position LineEdit for Subsequence
         self.subEndPos = QtWidgets.QLineEdit()
         self.subEndPos.setPlaceholderText("Enter end nucleotide position for subsequence")
+        self.subEndPos.setEnabled(False)  # Initially disabled
         subSeqLayout.addWidget(self.subEndPos)
 
         # Nucleotide Position Button (Ok) for Subsequence
         self.NucPosButton = QtWidgets.QPushButton("Ok")
+        self.NucPosButton.setEnabled(False)  # Initially disabled
         subSeqLayout.addWidget(self.NucPosButton)
         self.NucPosButton.clicked.connect(self.subSeqDisplay)
 
@@ -172,85 +175,87 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         self.UserSeqs = []
+        self.observableRangeSet = False  # Track if observable range is set
 
         self.AddSeqButton.clicked.connect(self.addSequence)
         self.RemoveButton.clicked.connect(self.removeSequence)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Your Application"))
         self.AddSeqButton.setText(_translate("MainWindow", "Add Sequence"))
         self.RemoveButton.setText(_translate("MainWindow", "Remove Sequence"))
         self.tableWidget.setHorizontalHeaderLabels(["", "Sequence Name", "Sequence"])
 
     def saveObservableRange(self):
-        chromosome = self.ChromosomeEdit.text()
-        obsStart = self.obsStartPos.text()
-        obsStop = self.obsEndPos.text()
+        chromosome = self.ChromosomeEdit.text().strip()
+        obsStart = self.obsStartPos.text().strip()
+        obsStop = self.obsEndPos.text().strip()
 
-        if not self.chromoConditions(chromosome):
-            return
-
-        if not self.obsStartStopConditions(obsStart, obsStop):
-            return
-
-        self.chromoLabel.setText(f"Chromosome: {chromosome}")
-        self.obsStartLabel.setText(f"Start: {obsStart}")
-        self.obsStopLabel.setText(f"Stop: {obsStop}")
+        if self.chromoConditions(chromosome) and self.obsStartStopConditions(obsStart, obsStop):
+            self.chromoLabel.setText(f"Chromosome: {chromosome}")
+            self.obsStartLabel.setText(f"Start Position: {obsStart}")
+            self.obsStopLabel.setText(f"Stop Position: {obsStop}")
+            self.observableRangeSet = True
+            self.subStartPos.setEnabled(True)
+            self.subEndPos.setEnabled(True)
+            self.NucPosButton.setEnabled(True)
+        else:
+            self.observableRangeSet = False
 
     def subSeqDisplay(self):
-        startSubSeq = self.subStartPos.text()
-        endSubSeq = self.subEndPos.text()
-
-        if not self.obsStartStopConditions(startSubSeq, endSubSeq):
+        if not self.observableRangeSet:
+            self.SeqErrors("Please set the observable range first.")
             return
 
-        subSeq = "acctagactcatcaagctgtcggca"
-        self.SeqEditor.setText(subSeq)
-        self.SeqEditor.setReadOnly(False)
+        start_pos = self.subStartPos.text().strip()
+        end_pos = self.subEndPos.text().strip()
+
+        if self.obsStartStopConditions(start_pos, end_pos):
+            subsequence = self.SeqEditor.text()[int(start_pos)-1:int(end_pos)]
+            self.SeqEditor.setText(subsequence)
+        else:
+            self.SeqEditor.clear()
 
     def addSequence(self):
         sequence = self.SeqEditor.text()
-        seqName = self.SeqName.text()
+        seqName = self.SeqName.text().strip()
 
-        if not self.SeqConditions(sequence, seqName):
-            return
-        self.UserSeqs.append((sequence, seqName))
-        self.updateTable()
-
-    def updateTable(self):
-        self.tableWidget.setRowCount(len(self.UserSeqs))
-        for row, (sequence, seqName) in enumerate(self.UserSeqs):
-            checkbox_item = QtWidgets.QTableWidgetItem()
-            checkbox_item.setFlags(QtCore.Qt.ItemFlag.ItemIsUserCheckable | QtCore.Qt.ItemFlag.ItemIsEnabled)
-            checkbox_item.setCheckState(QtCore.Qt.CheckState.Unchecked)
-            self.tableWidget.setItem(row, 0, checkbox_item)  
-            self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(seqName))
-            self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(sequence))
-
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        if self.SeqConditions(sequence, seqName):
+            self.UserSeqs.append((sequence, seqName))
+            self.updateTable()
 
     def removeSequence(self):
-        selected_rows = [index for index in range(self.tableWidget.rowCount()) if self.tableWidget.item(index, 0).checkState() == QtCore.Qt.CheckState.Checked]
-        for row in sorted(selected_rows, reverse=True):
-            del self.UserSeqs[row]
-        self.updateTable()
+        selected_seq = self.getSelectedSequence()
+        if selected_seq:
+            self.UserSeqs.remove(selected_seq)
+            self.updateTable()
+
+    def getSelectedSequence(self):
+        selected_rows = self.tableWidget.selectionModel().selectedRows()
+        if len(selected_rows) != 1:
+            self.SeqErrors("Please select one sequence.")
+            return None
+
+        row = selected_rows[0].row()
+        selected_seq = (self.tableWidget.item(row, 0).text(), self.tableWidget.item(row, 1).text())
+        return selected_seq
+
+    def updateTable(self):
+        self.tableWidget.clearContents()
+        self.tableWidget.setRowCount(len(self.UserSeqs))
+
+        for row, (sequence, seqName) in enumerate(self.UserSeqs):
+            item_sequence = QtWidgets.QTableWidgetItem(sequence)
+            item_seqName = QtWidgets.QTableWidgetItem(seqName)
+
+            self.tableWidget.setItem(row, 0, item_sequence)
+            self.tableWidget.setItem(row, 1, item_seqName)
 
     def sequenceToProcess(self):
-        selected_rowsProcess = [index for index in range(self.tableWidget.rowCount()) if self.tableWidget.item(index, 0).checkState() == QtCore.Qt.CheckState.Checked]
-
-        if len(selected_rowsProcess) != 1:
-            self.SeqErrors("Please select one sequence.")
-            return
-
-        seqNametoProcess = self.tableWidget.item(selected_rowsProcess[0], 1).text()
-        sequencetoProcess = self.tableWidget.item(selected_rowsProcess[0], 2).text()
-
-        # Save the selected sequence name and sequence to SeqToProcess
-        self.SeqToProcess = (seqNametoProcess, sequencetoProcess)
-
-        # Proceed with further processing or display the selected sequence
-        print(f"Selected sequence name: {seqNametoProcess}, Sequence: {sequencetoProcess}")
+        selected_seq = self.getSelectedSequence()
+        if selected_seq:
+            self.SeqToProcess = selected_seq
 
 
 if __name__ == "__main__":
@@ -260,4 +265,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec())
-
