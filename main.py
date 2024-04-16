@@ -1,11 +1,14 @@
-# This is the main python file to run the app
+'''This is the main page that runs the GUI.
+To run this page first ensure that you have
+the needed packages downloaded and then run 
+py main.py from the terminal. 
 
-'''
-main flow
-- on startup: make enformer object
-- firstpage: make the query object
-- variablepage: make the organizer object
-- visualization: plot the graphs
+This page will do several things, it will 
+first set up the app by creating the ML model 
+object (Enformer). It will show a page for 
+sequence entry by the user, followed by a page
+for variable entry, and lastly a page for 
+visualization.
 '''
 
 import sys
@@ -21,7 +24,7 @@ from PyQt6.QtCore import Qt
 from frontPage import MainPage
 from Models.Backend.Enformer import Enformer
 from variablePage import VariablePage
-from visualization import VizPage
+from visualizationPage import VizPage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -29,37 +32,52 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.setWindowTitle("Enhancer")
 
+        # create model object
         model = Enformer()
-        self.sequenceWidget = MainPage(model)
+
+        # create the three pages 
+        self.sequencePageWidget = MainPage(model)
         self.variablePageWidget = VariablePage()
         self.vizPageWidget = VizPage()
 
+        # create a stacked widget and add the pages
         self.stackedWidget = QStackedWidget()
-        self.stackedWidget.addWidget(self.sequenceWidget)
+        self.stackedWidget.addWidget(self.sequencePageWidget)
         self.stackedWidget.addWidget(self.variablePageWidget)
         self.stackedWidget.addWidget(self.vizPageWidget)
 
+        # set the central widget for the GUI
         self.setCentralWidget(self.stackedWidget)
 
         self.create_buttons()
 
-        self.sequenceWidget.GoButton.clicked.connect(self.go_btn_clicked)
+        # connect buttons to their corresponding functions
+        self.sequencePageWidget.GoButton.clicked.connect(self.go_btn_clicked)
         self.variablePageWidget.next_button.clicked.connect(self.visualize)
         
     def go_btn_clicked(self):
+        '''Function for when go button is clicked on the sequence entry page
+        This is where enformer gets called and then the UI switches to the
+        get variable page.
+        '''
         # save the data from this page
-        self.queryToProcess = self.sequenceWidget.QueryToProcess
+        self.queryToProcess = self.sequencePageWidget.QueryToProcess
         # get results from enformer
         self.queryToProcess.calculate_enformer()
 
-        # go to variable page
+        # save enformer results
         self.variablePageWidget.originalSeq = self.queryToProcess.orig_result
         self.variablePageWidget.moddedSeq = self.queryToProcess.modded_result
         self.variablePageWidget.startpos = self.queryToProcess.start
+
+        # go to variable page
         self.stackedWidget.setCurrentIndex(1)
 
     def visualize(self):
-        # run the visualizations
+        '''Function for when next button is clicked on the variable entry page
+        This is where the graphs are created and shown on the visualization 
+        page.
+        '''
         # create organizer object 
         self.variablePageWidget.go_to_next_page()
 
@@ -67,11 +85,18 @@ class MainWindow(QMainWindow):
         self.vizPageWidget.organizer = self.variablePageWidget.organizer
         self.vizPageWidget.query = self.queryToProcess
 
-        # visualize
+        # plot graphs
         self.vizPageWidget.plot_graphs()
+
+        # switch to visualizaion page
         self.stackedWidget.setCurrentIndex(2)
 
     def create_buttons(self):
+        '''Helper function to create the buttons on the menu bar.
+        Creates the file menu with open, save, and new buttons. 
+        Creates a home button that goes back to the sequence entry
+        page when clicked. 
+        '''
         # create file open button
         open_btn = QAction("&Open", self)
         open_btn.setStatusTip("Open")
@@ -104,9 +129,9 @@ class MainWindow(QMainWindow):
         home_btn.triggered.connect(self.onHomeBtnClick)
         menu.addAction(home_btn)
     
-    def onToolBarButtonClick(self, s):
-        print("click", s)
-    
+    # the function below are not yet implemented, this is 
+    # what will implement the memory functionality of the 
+    # application
     def saveSession(self):
         pass
     

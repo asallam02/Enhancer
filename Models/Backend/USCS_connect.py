@@ -3,8 +3,7 @@ import requests
 import xml.etree.ElementTree as ET
 
 def get_genes(chromosome, start, end):
-    """
-    Connects to the UCSC MySQL database to obtain genes within given coordinates.
+    """Connects to the UCSC MySQL database to obtain genes within given coordinates.
     Assumes that integer end >= integer start. 
     """
     # Connect to the UCSC MySQL database
@@ -36,8 +35,7 @@ def get_genes(chromosome, start, end):
 
 
 def get_fasta(chromosome, start, end, assembly="hg38"):
-    """
-    Connects to the USCS DAS files to get fasta sequence for hg38.
+    """Connects to the USCS DAS files to get fasta sequence for hg38.
     Gets fasta sequence given chromosome str, and start and stop integer indexes. 
     assumes that coordinates are such that end >= start. 
     """

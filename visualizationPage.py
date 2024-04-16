@@ -1,3 +1,7 @@
+'''This page is the visualization page, it is used to 
+graph and show the results from the ML model. 
+'''
+
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTabWidget
 from PyQt6.QtWebEngineWidgets import QWebEngineView
@@ -5,6 +9,11 @@ import plotly.graph_objs as go
 from Models.Graphing.Plotter import Plotter
 
 class GraphTab(QWidget):
+    '''This class creates a graphing tab widget to be 
+    used within other widgets. It takes a given DNA seq,
+    the model results, the wanted track, and shows the 
+    graph. 
+    '''
     def __init__(self, track_no, parent=None):
         self.track = track_no
         super().__init__(parent)
@@ -12,24 +21,30 @@ class GraphTab(QWidget):
 
     def init_ui(self):
         layout = QVBoxLayout()
+        # create a webview to show plotly figures as html object
         self.webview = QWebEngineView()
         layout.addWidget(self.webview)
         self.setLayout(layout)
 
     def plot_graph(self, query, organizer):
-        # Example graph plotting with Plotly
-        # x = [1, 2, 3, 4, 5]
-        # y = [10, 11, 12, 13, 14]
-        # data = [go.Scatter(x=x, y=y, mode='lines')]
-        # layout = go.Layout(title='Enformer Graph')
-        # fig = go.Figure(data=data, layout=layout)
+        # create the plotly figure
         fig = Plotter(query, organizer, self.track)
 
-        # Convert Plotly figure to HTML
+        # convert Plotly figure to HTML
         plotly_html = fig.to_html(include_plotlyjs='cdn')
+
+        # set the page to show the figure
         self.webview.setHtml(plotly_html)
 
 class VizPage(QWidget):
+    '''This page creates a visualization page.
+    Currently it only shows 5 pre-set tracks, but this 
+    should be changed to allow users to select needed 
+    tracks. 
+
+    The visualization page consists of several tabs 
+    using the GraphTab widget above.  
+    '''
     organizer = None
     query = None
 

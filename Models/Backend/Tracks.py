@@ -1,13 +1,14 @@
-#made so that the tracks.txt is only accessed once.
-#This will be accessed by the front end (to get all available options)
-#and the results, to find the index of the selected option
+'''Class was made to minimize access to the tracks.txt file.
+Made to be accessed by the front end (to get all available options)
+and the results (to find the index of the selected option).
+'''
 
 class Tracks:
     def __init__(self) -> None:
         self.legend = dict()
         input_file = "Backend/tracks.txt"
 
-        #for each line in txt, make last number the value, and the rest of the line the key.
+        # for each line in txt, make last number the value, and the rest of the line the key.
         with open(input_file, "r") as f:
             for line in f:
                 parts = line.strip().split(" ")

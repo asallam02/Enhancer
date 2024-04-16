@@ -3,6 +3,8 @@ import random
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea, QMessageBox
 from Models.Graphing.Organizer import Organizer
 
+'''A page to input boxes and parameters. For more info refer to the organizer.py file.'''
+
 class VariablePage(QWidget):
     originalSeq = None
     moddedSeq = None
@@ -106,11 +108,7 @@ class VariablePage(QWidget):
                 self.box_layouts.remove(layout)
                 break
 
-    def go_to_next_page(self):
-        # make sure original and modded are a initialized
-        # if (self.originalSeq == None or self.moddedSeq == None):
-        #     raise ValueError("variable page: need to initalize sequences first")
-        
+    def go_to_next_page(self):        
         # create organizer object
         self.organizer = Organizer(self.originalSeq, self.moddedSeq, self.startpos)
         print("created organizer object")
@@ -127,7 +125,7 @@ class VariablePage(QWidget):
             self.organizer.add_box(j, int(values[0]), int(values[1]), values[2], int(values[3]), int(values[4]), genRandomColor())
             j += 1
 
-
+# helper function to generate a random color for each box
 def genRandomColor():
     hexadecimal = "#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])
     return hexadecimal      

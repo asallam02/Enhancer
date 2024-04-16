@@ -1,3 +1,5 @@
+'''This is the sequence entry page that prompts the user to edit a sequence.'''
+
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -5,11 +7,12 @@ from Models.Backend.Query import Query
 from Models.Backend.Enformer import Enformer
 
 class MainPage(QtWidgets.QWidget):
-    MODEL = None ##PLEASE ADD ENFORMER MODEL PASSED FROM MAIN HERE
+    # create needed global variables
+    MODEL = None 
     selectedIdx = -1
 
-
     def __init__(self, model, parent=None):
+        # create needed variables
         self.MODEL = model
         super().__init__(parent)
         self.UserSeqs = []
@@ -125,6 +128,7 @@ class MainPage(QtWidgets.QWidget):
         self.RemoveButton.setText("Remove Sequence")
         self.tableWidget.setHorizontalHeaderLabels(["", "Sequence Name", "Sequence"])
 
+    # a pop-up message to show incase of any errors
     def SeqErrors(self, error_message):
         msgBox = QtWidgets.QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Icon.Critical)
@@ -133,6 +137,7 @@ class MainPage(QtWidgets.QWidget):
         msgBox.addButton(QtWidgets.QMessageBox.StandardButton.Ok)
         msgBox.exec()
 
+    # functions to ensure the user input is valid
     def SeqConditions(self, sequence, seqName):
         if not sequence:
             self.SeqErrors("Please enter a sequence.")
@@ -184,6 +189,7 @@ class MainPage(QtWidgets.QWidget):
         
         return True
 
+    # a function to save the given range and create a query to the USCS database
     def saveObservableRange(self):
         chromosome = self.ChromosomeEdit.text()
         obsStart = int(self.obsStartPos.text())
@@ -198,12 +204,11 @@ class MainPage(QtWidgets.QWidget):
             self.subEndPos.setEnabled(True)
             self.NucPosButton.setEnabled(True)
 
-            #MAKE QUEREY OBJECT HERE
             self.tempQuery = Query(chromosome, obsStart, obsStop, self.MODEL)
         else:
             self.observableRangeSet = False
 
-
+    # a function to show the chosen subsequence for editing
     def subSeqDisplay(self):
         if not self.observableRangeSet:
             self.SeqErrors("Please set the observable range first.")
@@ -253,6 +258,7 @@ class MainPage(QtWidgets.QWidget):
             del self.QueryObjects[row]
         self.updateTable()
 
+    # a function to process the selected sequence 
     def sequenceToProcess(self):
         selected_rowsProcess = [index for index in range(self.tableWidget.rowCount()) if self.tableWidget.item(index, 0).checkState() == QtCore.Qt.CheckState.Checked]
         if len(selected_rowsProcess) != 1:
