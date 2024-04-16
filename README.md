@@ -3,6 +3,11 @@ This repo is for a python graphical user interface (GUI). It uses the PyQt frame
 
 The main purpose of this app is to offer a UI for gene activation machine learning models. More specifically this app uses [Enformer](https://www.biorxiv.org/content/10.1101/2023.08.30.555582v1). It was developed as our capstone project for UBC biomedical engineering for use in the De Boer lab.  
 
+## Get Started
+To get started with this app first make sure you have all the required packages installed. I recommend using a virtual environment (see below for more information on how to set that up), but in case you don't want to do that you can download all the needed packages using `py -m pip install -r requirements.txt`. 
+
+Then to run the app run `py main.py`
+
 ## File Structure
 The main file structure of this app is as follows:
 
@@ -21,6 +26,20 @@ The main file structure of this app is as follows:
 - The entry point for the app is through main.py, this is the file that will start up the GUI. 
 - All the backend logic for the app is stored in the Models folder. The Graphing folder includes all the logic for graphing while the Backend folder includes all the logic for running the machine learning model, creating a query, and querying the USCS database. 
 - The Templates file includes the .ui templates for the app generated using qt designer. Please note, the final py files were slightly modified compared to the output you would get from directly translating these files to .py, if you do regenerate the files do so at your own risk. 
+
+## What does the app do?
+The flow of the application goes as follows
+- User opens the app
+- App creates an instance of the Enformer model
+- User inputs chromosome and desired location
+- App creates a Query object and fetches the desired sequence from the UCSC database
+- User edits the sequence, chooses a desired sequence, and clicks go
+- App runs the original and modified sequences through enformer and saves the results
+- App creates an Organizer object 
+- User adds a box
+- Organizer object creates a box and saves the parameters
+- User clicks next
+- App does background calculations, plots the graphs, and shows them 
 
 ## Installing packages and venv
 To run this app through the terminal we recommend using a venv. A venv is a virtual environment that allows you to install all your needed pip packages without breaking any other program on your laptop due to version differences. 
